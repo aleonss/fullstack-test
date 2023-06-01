@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { getCompanies, createCompany } from "../services/companiesService";
 
 function CompaniesPage() {
   const [companies, setCompanies] = useState([]);
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [rut, setRut] = useState('');
-  const [phone, setPhone] = useState('');
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [rut, setRut] = useState("");
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
-    // Llamada a la API para obtener la información de las empresas
-    fetch('http://localhost:8000/companies/')
-      .then(response => response.json())
-      .then(data => setCompanies(data))
-      .catch(error => console.log(error));
+    getCompanies().then((data) => setCompanies(data));
   }, []);
 
   function handleNameChange(event) {
@@ -33,23 +30,36 @@ function CompaniesPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, address, rut, phone })
-    };
-
-    fetch('http://localhost:8000/companies/', requestOptions)
-      .then(response => response.json())
-      .then(data => {
-        setCompanies([...companies, data]);
-        setName('');
-        setAddress('');
-        setRut('');
-        setPhone('');
-      })
-      .catch(error => console.log(error));
+  
+    const company = { name, address, rut, phone };
+  
+    if (name.length < 3) {
+      alert("El nombre debe tener al menos 3 caracteres.");
+      return;
+    }
+  
+    if (address.length < 5) {
+      alert("La dirección debe tener al menos 5 caracteres.");
+      return;
+    }
+  
+    if (rut.length < 8) {
+      alert("El RUT debe tener al menos 8 caracteres.");
+      return;
+    }
+  
+    if (phone.length < 9) {
+      alert("El teléfono debe tener al menos 9 caracteres.");
+      return;
+    }
+  
+    createCompany(company).then((data) => {
+      setCompanies([...companies, data]);
+      setName("");
+      setAddress("");
+      setRut("");
+      setPhone("");
+    });
   }
 
   return (
@@ -66,7 +76,7 @@ function CompaniesPage() {
           </tr>
         </thead>
         <tbody>
-          {companies.map(company => (
+          {companies.map((company) => (
             <tr key={company.id}>
               <td>{company.name}</td>
               <td>{company.address}</td>

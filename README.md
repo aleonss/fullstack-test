@@ -68,18 +68,6 @@ yarn build
 # Other commands
 yarn add react-router-dom
 yarn add @mui/material @emotion/react @emotion/styled
-
-yarn add @mui/material @mui/styled-engine-sc styled-components
-yarn add @fontsource/roboto
-yarn add @mui/icons-material
-yarn add @mui/styles
-
-yarn upgrade
-
-# npm install @material-ui/core --save
-# npm install
-# npm update
-# npm install --save react-router-dom
 ```
 
 ### Rebuild containers

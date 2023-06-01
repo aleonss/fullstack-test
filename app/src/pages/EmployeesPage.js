@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from "react";
+import {
+  getEmployeesByCompany,
+  createEmployee,
+} from "../services/employeesService";
 
 function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
@@ -21,8 +25,7 @@ function EmployeesPage() {
   useEffect(() => {
     // Llamada a la API para obtener los empleados de la empresa seleccionada
     if (selectedCompany) {
-      fetch(`http://localhost:8000/companies/${selectedCompany}/employees/`)
-        .then((response) => response.json())
+      getEmployeesByCompany(selectedCompany)
         .then((data) => setEmployees(data))
         .catch((error) => console.log(error));
     }
@@ -42,21 +45,26 @@ function EmployeesPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validate the length of the employee parameters
+    if (
+      newEmployee.name.length < 1 ||
+      newEmployee.name.length > 50 ||
+      newEmployee.rut.length < 1 ||
+      newEmployee.rut.length > 20 ||
+      newEmployee.email.length < 1 ||
+      newEmployee.email.length > 50
+    ) {
+      alert("Los parámetros del empleado no son válidos");
+      return;
+    }
+
     // Add the selectedCompany value to the newEmployee object
     const employeeWithCompany = {
       ...newEmployee,
       company: selectedCompany,
     };
 
-    // Llamada a la API para agregar un nuevo empleado a la empresa seleccionada
-    fetch(`http://localhost:8000/employees/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(employeeWithCompany),
-    })
-      .then((response) => response.json())
+    createEmployee(employeeWithCompany)
       .then((data) => {
         // Actualizar la lista de empleados con el nuevo empleado agregado
         setEmployees([...employees, data]);
